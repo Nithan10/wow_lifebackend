@@ -13,10 +13,10 @@ const authRoutes = require('./routes/authRoutes');
 const heroRoutes = require('./routes/heroRoutes');
 const trendingRoutes = require('./routes/trendingRoutes');
 const studioRoutes = require('./routes/studioRoutes');
-const ralleyzRoutes = require('./routes/ralleyzRoutes'); 
+const ralleyzRoutes = require('./routes/ralleyzRoutes');
 const characterRoutes = require('./routes/characterRoutes');
-const bestSellerRoutes = require('./routes/bestSellerRoutes'); 
-const shopByAgeRoutes = require('./routes/shopByAgeRoutes'); 
+const bestSellerRoutes = require('./routes/bestSellerRoutes');
+const shopByAgeRoutes = require('./routes/shopByAgeRoutes');
 const shopByCategoryRoutes = require('./routes/shopByCategoryRoutes');
 const bentoGridRoutes = require('./routes/bentoGridRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
@@ -34,11 +34,11 @@ require('./config/passport')(passport);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://wow-frontedn-y73e.vercel.app/',
-  credentials: true
-}));
-
+app.use(cors({ origin: ["http://localhost:3000", "https://wow-frontedn-y73e.vercel.app/"], 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+   credentials: true, exposedHeaders: ["Content-Length", "Authorization"],
+   }));
+    
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(session({
@@ -59,9 +59,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/trending', trendingRoutes);
 app.use('/api/studio', studioRoutes);
-app.use('/api/ralleyz', ralleyzRoutes); 
+app.use('/api/ralleyz', ralleyzRoutes);
 app.use('/api/characters', characterRoutes);
-app.use('/api/bestsellers', bestSellerRoutes); 
+app.use('/api/bestsellers', bestSellerRoutes);
 app.use('/api/shopbyage', shopByAgeRoutes);
 app.use('/api/shopbycategory', shopByCategoryRoutes);
 app.use('/api/bentogrid', bentoGridRoutes);
@@ -83,7 +83,7 @@ const uploadSubdirs = [
   path.join(__dirname, 'uploads/shopbyage'),
   path.join(__dirname, 'uploads/shopbycategory'),
   path.join(__dirname, 'uploads/bentogrid'),
-  path.join(__dirname, 'uploads/reviews') 
+  path.join(__dirname, 'uploads/reviews')
 ];
 
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
@@ -97,27 +97,27 @@ uploadSubdirs.forEach(dir => {
 mongoose.connect(process.env.MONGODB_URI123 || process.env.MONGODB_URI)
   .then(async () => {
     console.log('Connected to MongoDB', process.env.MONGODB_URI123 || process.env.MONGODB_URI);
-    
+
     // Initializers
-    try { await require('./models/TrendingConfig').getConfig(); console.log('✓ Trending config initialized'); } catch(e){}
-    try { await require('./models/Hero').getConfig(); console.log('✓ Hero config initialized'); } catch(e){}
-    try { await require('./models/RalleyzConfig').getConfig(); console.log('✓ Ralleyz config initialized'); } catch(e){}
-    try { await require('./models/CharacterConfig').getConfig(); console.log('✓ Characters config initialized'); } catch(e){}
-    try { await require('./models/BestSellerConfig').getConfig(); console.log('✓ Best Sellers config initialized'); } catch(e){}
-    try { await require('./models/ShopByAgeConfig').getConfig(); console.log('✓ Shop By Age config initialized'); } catch(e){}
-    try { await require('./models/ShopByCategoryConfig').getConfig(); console.log('✓ Shop By Category config initialized'); } catch(e){}
-    try { await require('./models/BentoGridConfig').getConfig(); console.log('✓ Bento Grid config initialized'); } catch(e){}
-    
+    try { await require('./models/TrendingConfig').getConfig(); console.log('✓ Trending config initialized'); } catch (e) { }
+    try { await require('./models/Hero').getConfig(); console.log('✓ Hero config initialized'); } catch (e) { }
+    try { await require('./models/RalleyzConfig').getConfig(); console.log('✓ Ralleyz config initialized'); } catch (e) { }
+    try { await require('./models/CharacterConfig').getConfig(); console.log('✓ Characters config initialized'); } catch (e) { }
+    try { await require('./models/BestSellerConfig').getConfig(); console.log('✓ Best Sellers config initialized'); } catch (e) { }
+    try { await require('./models/ShopByAgeConfig').getConfig(); console.log('✓ Shop By Age config initialized'); } catch (e) { }
+    try { await require('./models/ShopByCategoryConfig').getConfig(); console.log('✓ Shop By Category config initialized'); } catch (e) { }
+    try { await require('./models/BentoGridConfig').getConfig(); console.log('✓ Bento Grid config initialized'); } catch (e) { }
+
     try {
       const ServicesConfig = require('./models/ServicesConfig');
       await ServicesConfig.getConfig();
       console.log('✓ Services config initialized');
     } catch (err) { console.error('Error initializing services config:', err); }
-    
-    try { 
-      await require('./models/ReviewConfig').getConfig(); 
+
+    try {
+      await require('./models/ReviewConfig').getConfig();
       console.log('✓ Reviews config initialized');
-    } catch(e) { console.error('Error initializing reviews config:', e); }
+    } catch (e) { console.error('Error initializing reviews config:', e); }
 
     try {
       const StudioConfig = require('./util'); // Kept exactly as you had it
@@ -125,20 +125,20 @@ mongoose.connect(process.env.MONGODB_URI123 || process.env.MONGODB_URI)
         await StudioConfig.getConfig();
         console.log('✓ Studio config initialized');
       }
-    } catch (err) {}
-    
+    } catch (err) { }
+
     try {
       const ContactConfig = require('./models/ContactConfig');
       await ContactConfig.getConfig();
       console.log('✓ Contact config initialized');
     } catch (err) { console.error('Error initializing contact config:', err); }
-    
+
     try {
       const BlogLifestyleConfig = require('./models/BlogLifestyleConfig');
       await BlogLifestyleConfig.getConfig();
       console.log('✓ Blog/Lifestyle config initialized');
     } catch (err) { console.error('Error initializing Blog/Lifestyle config:', err); }
-    
+
     try {
       const EnhancedTestimonialsConfig = require('./models/EnhancedTestimonialsConfig');
       await EnhancedTestimonialsConfig.getConfig();
