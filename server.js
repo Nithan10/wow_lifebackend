@@ -35,7 +35,7 @@ require('./config/passport')(passport);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: process.env.FRONTEND_URL || 'https://wow-frontedn-y73e.vercel.app/',
   credentials: true
 }));
 
@@ -96,7 +96,7 @@ uploadSubdirs.forEach(dir => {
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI123 || process.env.MONGODB_URI)
   .then(async () => {
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB', process.env.MONGODB_URI123 || process.env.MONGODB_URI);
     
     // Initializers
     try { await require('./models/TrendingConfig').getConfig(); console.log('✓ Trending config initialized'); } catch(e){}
