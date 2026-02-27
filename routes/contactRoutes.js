@@ -17,5 +17,5 @@ router.post('/messages', createMessage); // Form submission from the frontend
 router.put('/', protect, verifyAdmin, updateContact);
 router.post('/reset', protect, verifyAdmin, resetContact);
 router.get('/messages', protect, verifyAdmin, getMessages); // Fetching messages for admin panel
-
+  
 module.exports = router;
