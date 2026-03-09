@@ -35,4 +35,5 @@ const orderSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+// Check if the model exists before compiling it
+module.exports = mongoose.models.Order || mongoose.model('Order', orderSchema);
