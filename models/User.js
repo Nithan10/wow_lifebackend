@@ -1,13 +1,24 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// Define the cart item structure
+const cartItemSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
+  },
+  quantity: {
+    type: Number,
+    default: 1,
+    min: 1
+  }
+}, { _id: false });
+
 const userSchema = new mongoose.Schema({
   fullname: {
     type: String,
-    required: function() {
-      // Required if not using Google auth
-      return !this.googleId;
-    }
+    required: function() { return !this.googleId; }
   },
   email: {
     type: String,
@@ -18,15 +29,12 @@ const userSchema = new mongoose.Schema({
   },
   mobilenumber: {
     type: String,
-    sparse: true, // Allows null/undefined values
+    sparse: true,
     default: null
   },
   password: {
     type: String,
-    required: function() {
-      // Required if not using Google auth
-      return !this.googleId;
-    }
+    required: function() { return !this.googleId; }
   },
   googleId: {
     type: String,
@@ -42,15 +50,19 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'moderator', 'admin'],
     default: 'user'
   },
+  // --- NEW: Cart Storage ---
+  cart: {
+    type: [cartItemSchema],
+    default: [],
+    select: false // Hides this field when querying users for the admin page
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-// Hash password before saving
 userSchema.pre('save', async function(next) {
-  // Only hash password if it's modified and exists
   if (this.isModified('password') && this.password) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -58,9 +70,7 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// Compare password method
 userSchema.methods.comparePassword = async function(candidatePassword) {
-  // If user registered with Google, they won't have a password
   if (!this.password) return false;
   return await bcrypt.compare(candidatePassword, this.password);
 };
