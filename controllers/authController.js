@@ -149,7 +149,7 @@ const googleCallback = async (req, res) => {
     const token = generateToken(user._id, user.role);
 
     // Redirect to frontend with token
-    const frontendURL = process.env.frontendurl11 || 'https://wow-frontedn-y73e.vercel.app';
+    const frontendURL = process.env.frontendurl11 || 'https://wow-frontedn-y73e.vercel.app/';
     res.redirect(`${frontendURL}/auth/google-success?token=${token}&user=${encodeURIComponent(JSON.stringify({
       _id: user._id,
       fullname: user.fullname,
@@ -159,7 +159,7 @@ const googleCallback = async (req, res) => {
     }))}`);
   } catch (error) {
     console.error('Google callback error:', error);
-    res.redirect(`${process.env.frontendurl11 || 'https://wow-frontedn-y73e.vercel.app'}/auth?error=google_auth_failed`);
+    res.redirect(`${process.env.frontendurl11 || 'https://wow-frontedn-y73e.vercel.app/'}/auth?error=google_auth_failed`);
   }
 };
 
@@ -313,4 +313,4 @@ module.exports = {
   googleSuccess,
   getProfile,
   updateProfile,logout
-};   
+};

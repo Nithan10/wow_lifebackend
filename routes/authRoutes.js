@@ -24,7 +24,7 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback', 
   passport.authenticate('google', { 
     session: false,
-    failureRedirect: `${process.env.FRONTEND_URL || 'https://wow-frontedn-y73e.vercel.app'}/auth?error=google_auth_failed`
+    failureRedirect: `${process.env.FRONTEND_URL || 'https://wow-frontedn-y73e.vercel.app/'}/auth?error=google_auth_failed`
   }),
   googleCallback
 );
