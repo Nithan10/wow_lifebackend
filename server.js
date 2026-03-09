@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo'); // <-- REVERTED: Back to modern import
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
@@ -57,15 +56,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Define Mongo URI. Checks process.env first, falls back to the provided string.
 const mongoUri = process.env.MONGODB_URI || "mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/?retryWrites=true&w=majority";
 
-// Configured Session to use MongoDB Store
+// Configured Session (Reverted to default memory store to bypass crashes)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ // <-- REVERTED: Back to .create() for the newest version
-    mongoUrl: mongoUri,
-    collectionName: 'sessions'
-  }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     maxAge: 24 * 60 * 60 * 1000 // 1 day
