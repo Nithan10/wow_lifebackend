@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session); // Using correct syntax for your installed version
+const MongoStore = require('connect-mongo'); // <-- REVERTED: Back to modern import
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
@@ -62,9 +62,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ 
-    url: mongoUri,
-    collection: 'sessions' // Sessions will be saved in a 'sessions' collection in your DB
+  store: MongoStore.create({ // <-- REVERTED: Back to .create() for the newest version
+    mongoUrl: mongoUri,
+    collectionName: 'sessions'
   }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
