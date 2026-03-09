@@ -313,4 +313,4 @@ module.exports = {
   googleSuccess,
   getProfile,
   updateProfile,logout
-};
+};   
