@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
+const MongoStore = require('connect-mongo'); // <-- Imported connect-mongo
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
@@ -31,9 +32,12 @@ const myOrderRoutes = require('./routes/myOrderRoutes');
 const userRoutes = require('./routes/userRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
-
 // Initialize app
 const app = express();
+
+// Trust proxy is necessary when deploying to services like Render/Heroku 
+// if you want secure cookies (secure: true in production)
+app.set('trust proxy', 1);
 
 // Passport config
 require('./config/passport')(passport);
@@ -41,20 +45,30 @@ require('./config/passport')(passport);
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: ["http://localhost:3001", "https://wow-frontedn-y73e.vercel.app"], 
+app.use(cors({ 
+  origin: ["http://localhost:3001", "https://wow-frontedn-y73e.vercel.app"], 
   methods: ["GET", "POST", "PUT", "DELETE"],
-   credentials: true, exposedHeaders: ["Content-Length", "Authorization"],
-   }));
+  credentials: true, 
+  exposedHeaders: ["Content-Length", "Authorization"],
+}));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Define Mongo URI once so we can use it for both mongoose and the session store
+const mongoUri = process.env.MONGODB_URI123 || process.env.MONGODB_URI;
+
+// Configured Session to use MongoDB Store
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: mongoUri,
+    collectionName: 'sessions' // Sessions will be saved in a 'sessions' collection in your DB
+  }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
   }
 }));
 
@@ -89,9 +103,6 @@ app.use('/api/user', userRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/orders', myOrderRoutes); 
 
-
-
-
 // Directories logic
 const uploadsDir = path.join(__dirname, 'uploads');
 const uploadSubdirs = [
@@ -116,7 +127,7 @@ uploadSubdirs.forEach(dir => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI123 || process.env.MONGODB_URI)
+mongoose.connect(mongoUri)
   .then(async () => {
     console.log('Connected to MongoDB');
     
