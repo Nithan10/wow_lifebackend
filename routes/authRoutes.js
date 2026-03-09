@@ -53,4 +53,4 @@ router.get('/moderator', protect, authorize('admin', 'moderator'), (req, res) =>
   });
 });
 
-module.exports = router;
+module.exports = router;   
