@@ -63,9 +63,6 @@ const register = async (req, res, next) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-// controllers/authController.js (updated login function)
-
-
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -312,5 +309,7 @@ module.exports = {
   googleCallback,
   googleSuccess,
   getProfile,
-  updateProfile,logout
+  updateProfile,
+  logout,
+  logoutAll
 };

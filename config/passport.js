@@ -1,6 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/User');
+const User = require('../models/User'); // Adjust path to your User model if needed
 
 module.exports = function(passport) {
   passport.use(
@@ -8,7 +8,7 @@ module.exports = function(passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL, 
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback', 
         proxy: true
       },
       async (accessToken, refreshToken, profile, done) => {
@@ -25,7 +25,11 @@ module.exports = function(passport) {
             // If user exists but doesn't have googleId, update it
             if (!user.googleId) {
               user.googleId = profile.id;
-              user.avatar = profile.photos[0].value;
+              
+              // Only update avatar if they don't have one
+              if (!user.avatar && profile.photos && profile.photos.length > 0) {
+                user.avatar = profile.photos[0].value;
+              }
               await user.save();
             }
             return done(null, user);
@@ -36,7 +40,7 @@ module.exports = function(passport) {
             googleId: profile.id,
             fullname: profile.displayName,
             email: profile.emails[0].value,
-            avatar: profile.photos[0].value,
+            avatar: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : '',
             mobilenumber: null, // Will be added later if needed
             password: null // No password for Google users
           });

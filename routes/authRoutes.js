@@ -24,7 +24,8 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback', 
   passport.authenticate('google', { 
     session: false,
-    failureRedirect: `${process.env.FRONTEND_URL || 'https://wow-frontedn-y73e.vercel.app'}/auth?error=google_auth_failed`
+    // FIXED: Now correctly points back to your Vercel frontend on failure
+    failureRedirect: `${process.env.frontendurl11 || 'https://wow-frontedn-y73e.vercel.app'}/auth?error=google_auth_failed`
   }),
   googleCallback
 );
@@ -53,4 +54,4 @@ router.get('/moderator', protect, authorize('admin', 'moderator'), (req, res) =>
   });
 });
 
-module.exports = router;   
+module.exports = router;
