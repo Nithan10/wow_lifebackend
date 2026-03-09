@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo'); // <-- Imported connect-mongo
+const MongoStore = require('connect-mongo')(session); // Using correct syntax for your installed version
 const passport = require('passport');
 const path = require('path');
 const fs = require('fs');
@@ -54,17 +54,17 @@ app.use(cors({
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Define Mongo URI once so we can use it for both mongoose and the session store
-const mongoUri = process.env.MONGODB_URI123 || process.env.MONGODB_URI;
+// Define Mongo URI. Checks process.env first, falls back to the provided string.
+const mongoUri = process.env.MONGODB_URI || "mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/?retryWrites=true&w=majority";
 
 // Configured Session to use MongoDB Store
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: mongoUri,
-    collectionName: 'sessions' // Sessions will be saved in a 'sessions' collection in your DB
+  store: new MongoStore({ 
+    url: mongoUri,
+    collection: 'sessions' // Sessions will be saved in a 'sessions' collection in your DB
   }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
