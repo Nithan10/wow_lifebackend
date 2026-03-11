@@ -74,6 +74,15 @@ const getProductById = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching product:', error);
+    
+    // Handle invalid Object ID format gracefully
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Failed to fetch product',
@@ -99,7 +108,7 @@ const updateProduct = async (req, res) => {
     product = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true } // runValidators ensures the updated data still matches schema rules
     );
 
     res.status(200).json({
@@ -109,6 +118,24 @@ const updateProduct = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating product:', error);
+
+    // Handle Mongoose Validation Errors gracefully on update
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
+      });
+    }
+
+    // Handle invalid Object ID format
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Failed to update product',
@@ -140,6 +167,15 @@ const deleteProduct = async (req, res) => {
     });
   } catch (error) {
     console.error('Error deleting product:', error);
+
+    // Handle invalid Object ID format
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID format'
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Failed to delete product',

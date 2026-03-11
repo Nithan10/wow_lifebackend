@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
+// Prevents mongoose from creating an ID for each sub-document
 const specSchema = new mongoose.Schema({
-  label: { type: String, required: true },
-  value: { type: String, required: true }
-}, { _id: false }); // Prevents mongoose from creating an ID for each sub-document
+  label: { type: String, required: true, trim: true },
+  value: { type: String, required: true, trim: true }
+}, { _id: false }); 
 
 const productSchema = new mongoose.Schema({
   title: {
@@ -33,11 +34,13 @@ const productSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: [true, 'Product type is required']
+    required: [true, 'Product type is required'],
+    trim: true
   },
   category: {
     type: String,
-    required: [true, 'Category is required']
+    required: [true, 'Category is required'],
+    trim: true
   },
   availability: {
     type: String,
@@ -51,28 +54,39 @@ const productSchema = new mongoose.Schema({
     default: 0,
     min: [0, 'Stock cannot be negative']
   },
-  images: [{
-    type: String,
-    required: [true, 'At least one product image URL is required']
-  }],
+  // Custom validation to ensure the array has at least one element
+  images: {
+    type: [String],
+    validate: {
+      validator: function(v) {
+        return Array.isArray(v) && v.length > 0;
+      },
+      message: 'At least one product image URL is required'
+    }
+  },
   description: {
     type: String,
+    trim: true,
     default: ''
   },
   // --- Extended Details ---
   aboutFeatures: [{
-    type: String
+    type: String,
+    trim: true
   }],
   aboutDescription: {
     type: String,
+    trim: true,
     default: ''
   },
   specifications: [specSchema],
   idealFor: [{
-    type: String
+    type: String,
+    trim: true
   }],
   deliveryTime: {
     type: String,
+    trim: true,
     default: '3 to 8 days'
   }
 }, {
