@@ -54,7 +54,7 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Define Mongo URI. Checks process.env first, falls back to the provided string.
-const mongoUri = process.env.MONGODB_URI || "mongodb+srv://nithanssk_db_user:xx0P6vVr9DaaKxXm@cluster0.vy1g43n.mongodb.net/?retryWrites=true&w=majority";
+const mongoUri = process.env.MONGODB_URI123 
 
 // Configured Session (Reverted to default memory store to bypass crashes)
 app.use(session({
