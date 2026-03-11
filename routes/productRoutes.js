@@ -13,7 +13,7 @@ const { protect, verifyAdmin } = require('../middleware/authMiddleware');
 // Route: /api/admin/products
 router.route('/')
   .get(getProducts) 
-  .post(
+  .post(    
     protect, 
     verifyAdmin, 
     createProduct
