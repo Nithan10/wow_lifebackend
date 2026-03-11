@@ -1,38 +1,82 @@
 const mongoose = require('mongoose');
 
-const orderItemSchema = new mongoose.Schema({
-    productId: { type: String, required: true },
-    title: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-    image: { type: String }
-}, { _id: false });
+const specSchema = new mongoose.Schema({
+  label: { type: String, required: true },
+  value: { type: String, required: true }
+}, { _id: false }); // Prevents mongoose from creating an ID for each sub-document
 
-const addressSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    address: String,
-    apartment: String,
-    city: String,
-    state: String,
-    pinCode: String,
-    phone: String,
-    country: String
-}, { _id: false });
-
-const orderSchema = new mongoose.Schema({
-    orderId: { type: String, required: true, unique: true },
-    // LINK TO THE USER ACCOUNT
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false }, 
-    contactEmail: { type: String, required: true },
-    items: [orderItemSchema],
-    totalAmount: { type: Number, required: true },
-    shippingAddress: addressSchema,
-    billingAddress: addressSchema,
-    paymentMethod: { type: String, required: true },
-    paymentStatus: { type: String, enum: ['PENDING', 'SUCCESS', 'FAILED'], default: 'PENDING' },
-    orderStatus: { type: String, enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Processing' },
-    createdAt: { type: Date, default: Date.now }
+const productSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, 'Product title is required'],
+    trim: true
+  },
+  brand: {
+    type: String,
+    required: [true, 'Brand name is required'],
+    trim: true
+  },
+  price: {
+    type: Number,
+    required: [true, 'Selling price is required'],
+    min: [0, 'Price cannot be negative']
+  },
+  originalPrice: {
+    type: Number,
+    required: [true, 'Original MRP is required'],
+    min: [0, 'Original price cannot be negative']
+  },
+  badge: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  type: {
+    type: String,
+    required: [true, 'Product type is required']
+  },
+  category: {
+    type: String,
+    required: [true, 'Category is required']
+  },
+  availability: {
+    type: String,
+    required: [true, 'Availability status is required'],
+    enum: ['In Stock', 'Out Of Stock'],
+    default: 'In Stock'
+  },
+  totalStock: {
+    type: Number,
+    required: [true, 'Total stock is required'],
+    default: 0,
+    min: [0, 'Stock cannot be negative']
+  },
+  images: [{
+    type: String,
+    required: [true, 'At least one product image URL is required']
+  }],
+  description: {
+    type: String,
+    default: ''
+  },
+  // --- Extended Details ---
+  aboutFeatures: [{
+    type: String
+  }],
+  aboutDescription: {
+    type: String,
+    default: ''
+  },
+  specifications: [specSchema],
+  idealFor: [{
+    type: String
+  }],
+  deliveryTime: {
+    type: String,
+    default: '3 to 8 days'
+  }
+}, {
+  timestamps: true // Automatically creates createdAt and updatedAt fields
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Product', productSchema);
